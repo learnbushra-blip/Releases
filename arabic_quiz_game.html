@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبر معلوماتك</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'IBM Plex Sans Arabic',sans-serif;
+  background:linear-gradient(135deg,#1a1040 0%,#0f2044 50%,#1a1040 100%);
+  min-height:100vh;direction:rtl;padding:2rem 1rem;
+  display:flex;align-items:flex-start;justify-content:center;
+}
+body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(108,99,255,0.15),transparent 70%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;bottom:-200px;left:-200px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(255,101,132,0.12),transparent 70%);pointer-events:none;z-index:0}
+.qz{width:100%;max-width:580px;position:relative;z-index:1}
+.qz-screen{display:none}.qz-screen.active{display:block}
+
+/* HOME */
+.home-hero{text-align:center;padding:1.5rem 0 1rem}
+.home-emoji{font-size:52px;display:block;margin-bottom:10px;animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.home-title{font-size:30px;font-weight:700;color:#fff;margin-bottom:4px}
+.home-sub{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:1.5rem}
+.sec-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-bottom:8px}
+
+.cats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+@media(max-width:500px){.cats-grid{grid-template-columns:repeat(2,1fr)}}
+.cat-card{border-radius:14px;padding:0.9rem 0.5rem;cursor:pointer;transition:all 0.25s;text-align:center;border:2px solid transparent;position:relative;overflow:hidden}
+.cat-card:hover{transform:translateY(-3px)}
+.cat-card.selected{border-color:rgba(255,255,255,0.7);transform:scale(1.04)}
+.cat-card[data-cat="تقنية"]{background:linear-gradient(135deg,#667eea,#764ba2)}
+.cat-card[data-cat="علوم"]{background:linear-gradient(135deg,#11998e,#38ef7d)}
+.cat-card[data-cat="تاريخ"]{background:linear-gradient(135deg,#f7971e,#ffd200)}
+.cat-card[data-cat="رياضة"]{background:linear-gradient(135deg,#f953c6,#b91d73)}
+.cat-card[data-cat="دول وعواصم"]{background:linear-gradient(135deg,#43b89c,#0f6e56)}
+.cat-card[data-cat="رياضيات"]{background:linear-gradient(135deg,#e96c5a,#c0392b)}
+.cat-card[data-cat="إنجليزي"]{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.cat-card[data-cat="ثقافة عامة"]{background:linear-gradient(135deg,#fa709a,#fee140)}
+.cat-check{position:absolute;top:6px;left:6px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.9);display:none;align-items:center;justify-content:center;font-size:11px;color:#333}
+.cat-card.selected .cat-check{display:flex}
+.cat-icon{font-size:26px;display:block;margin-bottom:5px}
+.cat-name{font-size:11px;font-weight:700;color:#fff;line-height:1.3}
+.cat-count{font-size:10px;color:rgba(255,255,255,0.55);margin-top:2px}
+
+.lvl-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+.lvl-btn{padding:9px 4px;border-radius:12px;border:2px solid transparent;background:rgba(255,255,255,0.07);font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);cursor:pointer;transition:all 0.2s;font-family:inherit;text-align:center;line-height:1.4}
+.lvl-btn:hover{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8)}
+.lvl-btn.easy.selected{background:rgba(67,198,172,0.2);border-color:#43c6ac;color:#43c6ac}
+.lvl-btn.medium.selected{background:rgba(247,151,30,0.2);border-color:#f7971e;color:#f7971e}
+.lvl-btn.hard.selected{background:rgba(255,101,132,0.2);border-color:#ff6584;color:#ff6584}
+.lvl-btn.mixed.selected{background:rgba(108,99,255,0.2);border-color:#6c63ff;color:#a78bfa}
+
+.start-btn{width:100%;padding:15px;border-radius:14px;border:none;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:all 0.3s}
+.start-btn:not(:disabled){background:linear-gradient(135deg,#6c63ff,#a855f7);color:#fff;box-shadow:0 8px 24px rgba(108,99,255,0.4)}
+.start-btn:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(108,99,255,0.55)}
+.start-btn:disabled{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.2);cursor:not-allowed}
+
+/* GAME */
+.topbar{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
+.lvl-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+.lvl-badge.easy{background:rgba(67,198,172,0.2);color:#43c6ac;border:1px solid rgba(67,198,172,0.3)}
+.lvl-badge.medium{background:rgba(247,151,30,0.2);color:#f7971e;border:1px solid rgba(247,151,30,0.3)}
+.lvl-badge.hard{background:rgba(255,101,132,0.2);color:#ff6584;border:1px solid rgba(255,101,132,0.3)}
+.lvl-badge.mixed{background:rgba(108,99,255,0.2);color:#a78bfa;border:1px solid rgba(108,99,255,0.3)}
+.prog-wrap{flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;min-width:80px}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.4s ease;background:linear-gradient(90deg,#6c63ff,#f953c6)}
+.qnum{font-size:12px;color:rgba(255,255,255,0.35);min-width:36px;text-align:left}
+.timer-box{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;border:2px solid rgba(255,255,255,0.12);color:#fff;flex-shrink:0;transition:all 0.3s}
+.timer-box.warn{border-color:#ff6584;color:#ff6584;animation:blink .5s ease infinite alternate}
+@keyframes blink{from{opacity:1}to{opacity:0.4}}
+.score-pill{font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1)}
+.cat-pill{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.08)}
+
+.q-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:1.5rem;margin-bottom:1rem;min-height:90px;display:flex;align-items:center}
+.q-card.pop{animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.q-text{font-size:17px;font-weight:500;color:#fff;line-height:1.65}
+
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:1rem}
+.opt{padding:12px 16px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.8);font-size:14px;font-family:inherit;cursor:pointer;transition:all 0.2s;text-align:right;display:flex;align-items:center;gap:12px;width:100%;font-weight:500}
+.opt:hover:not(:disabled){background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.22);transform:translateX(-3px)}
+.opt:disabled{cursor:default}
+.opt.correct{background:rgba(34,197,94,0.18);border-color:#22c55e;color:#86efac;animation:popIn .3s ease}
+.opt.wrong{background:rgba(239,68,68,0.18);border-color:#ef4444;color:#fca5a5;animation:shakeIt .4s ease}
+.opt.reveal{background:rgba(59,130,246,0.18);border-color:#3b82f6;color:#93c5fd}
+@keyframes popIn{0%{transform:scale(.97)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+@keyframes shakeIt{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.opt-letter{width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.04);transition:all 0.2s}
+.opt.correct .opt-letter{background:#22c55e;border-color:#22c55e;color:#fff}
+.opt.wrong .opt-letter{background:#ef4444;border-color:#ef4444;color:#fff}
+.opt.reveal .opt-letter{background:#3b82f6;border-color:#3b82f6;color:#fff}
+
+.explain-box{border-radius:14px;padding:12px 16px;font-size:13px;line-height:1.7;margin-bottom:1rem;display:none;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);color:rgba(255,255,255,0.75)}
+.explain-box.show{display:block;animation:slideIn .3s ease}
+.explain-box b{color:#a78bfa}
+
+.next-btn{width:100%;padding:14px;border-radius:14px;border:none;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .25s;display:none;background:linear-gradient(135deg,#6c63ff,#a855f7);color:#fff;box-shadow:0 6px 20px rgba(108,99,255,0.35)}
+.next-btn.show{display:block;animation:slideIn .25s ease}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(108,99,255,0.5)}
+
+/* RESULT */
+.result-top{text-align:center;padding:1.25rem 0 1rem}
+.result-ring{width:130px;height:130px;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;position:relative;background:conic-gradient(var(--rc,#6c63ff) var(--rp,0%),rgba(255,255,255,0.06) 0)}
+.result-inner{width:106px;height:106px;border-radius:50%;background:#1a1040;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.result-pct{font-size:28px;font-weight:700;color:#fff}
+.result-pct-l{font-size:11px;color:rgba(255,255,255,0.35)}
+.result-emoji{font-size:40px;display:block;margin-bottom:6px;animation:bounce 1s ease 3}
+.result-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:5px}
+.result-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:1.25rem}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.rs{border-radius:14px;padding:12px;text-align:center}
+.rs.c{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.2)}
+.rs.w{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2)}
+.rs.s{background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.2)}
+.rs-n{font-size:24px;font-weight:700;color:#fff}
+.rs-l{font-size:11px;margin-top:2px}
+.rs.c .rs-l{color:#86efac}.rs.w .rs-l{color:#fca5a5}.rs.s .rs-l{color:#a78bfa}
+.review-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:1rem;margin-bottom:1.25rem}
+.review-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:1.5px;margin-bottom:8px}
+.rev-item{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.rev-item:last-child{border-bottom:none}
+.rev-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.rev-dot.c{background:#22c55e}.rev-dot.w{background:#ef4444}
+.rev-q{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5}
+.rev-a{font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px}
+.rev-a .ok{color:#86efac}.rev-a .bad{color:#fca5a5}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.replay-btn{padding:13px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.12);background:transparent;font-family:inherit;font-size:14px;font-weight:700;color:rgba(255,255,255,0.6);cursor:pointer;transition:all .2s}
+.replay-btn:hover{background:rgba(255,255,255,0.07);color:#fff}
+.home-btn{padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#f953c6,#b91d73);font-family:inherit;font-size:14px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(249,83,198,0.3)}
+.home-btn:hover{transform:translateY(-2px)}
+@media(max-width:480px){body{padding:1rem .75rem}.lvl-row{grid-template-columns:repeat(2,1fr)}.q-text{font-size:15px}.opt{font-size:13px}}
+</style>
+</head>
+<body>
+<div class="qz">
+
+  <!-- HOME -->
+  <div class="qz-screen active" id="screenHome">
+    <div class="home-hero">
+      <span class="home-emoji">🧠</span>
+      <div class="home-title">اختبر معلوماتك!</div>
+      <div class="home-sub">8 فئات · 3 مستويات · 120+ سؤال</div>
+    </div>
+    <div class="sec-lbl">اختر الفئة</div>
+    <div class="cats-grid" id="catGrid"></div>
+    <div class="sec-lbl">اختر المستوى</div>
+    <div class="lvl-row">
+      <button class="lvl-btn easy selected" data-lvl="easy">🟢<br>سهل</button>
+      <button class="lvl-btn medium" data-lvl="medium">🟡<br>متوسط</button>
+      <button class="lvl-btn hard" data-lvl="hard">🔴<br>صعب</button>
+      <button class="lvl-btn mixed" data-lvl="mixed">🎲<br>مختلط</button>
+    </div>
+    <button class="start-btn" id="startBtn" disabled>اختر فئة أولاً</button>
+  </div>
+
+  <!-- GAME -->
+  <div class="qz-screen" id="screenGame">
+    <div class="topbar">
+      <span class="lvl-badge" id="lvlBadge">سهل</span>
+      <span class="cat-pill" id="catPill"></span>
+      <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <span class="qnum" id="qNum">1/10</span>
+      <div class="timer-box" id="timerBox">20</div>
+      <span class="score-pill" id="scorePill">0 نقطة</span>
+    </div>
+    <div class="q-card pop" id="qCard"><div class="q-text" id="qText"></div></div>
+    <div class="opts" id="optsWrap"></div>
+    <div class="explain-box" id="explainBox"></div>
+    <button class="next-btn" id="nextBtn">التالي ←</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="qz-screen" id="screenResult">
+    <div class="result-top">
+      <div class="result-ring" id="resultRing"><div class="result-inner"><div class="result-pct" id="resPct">0%</div><div class="result-pct-l">نتيجتك</div></div></div>
+      <span class="result-emoji" id="resEmoji">🏆</span>
+      <div class="result-title" id="resTitle"></div>
+      <div class="result-sub" id="resSub"></div>
+    </div>
+    <div class="result-stats">
+      <div class="rs c"><div class="rs-n" id="rsC">0</div><div class="rs-l">✅ صح</div></div>
+      <div class="rs w"><div class="rs-n" id="rsW">0</div><div class="rs-l">❌ خطأ</div></div>
+      <div class="rs s"><div class="rs-n" id="rsS">0</div><div class="rs-l">🏆 نقطة</div></div>
+    </div>
+    <div class="review-box"><div class="review-lbl">مراجعة الأسئلة</div><div id="reviewList"></div></div>
+    <div class="action-row">
+      <button class="replay-btn" id="replayBtn">🔄 مجدداً</button>
+      <button class="home-btn" id="homeBtn">🏠 القائمة</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB = {
+
+  'دول وعواصم': { icon:'🌍', grad:'linear-gradient(135deg,#43b89c,#0f6e56)', easy:[
+    {q:'ما عاصمة فرنسا؟', opts:['لندن','برلين','باريس','مدريد'], a:2, exp:'باريس هي عاصمة فرنسا ومدينتها الأكبر.'},
+    {q:'ما عاصمة اليابان؟', opts:['أوساكا','طوكيو','كيوتو','ناغوي'], a:1, exp:'طوكيو عاصمة اليابان وأكبر مدنها.'},
+    {q:'ما عاصمة الأردن؟', opts:['إربد','الزرقاء','عقبة','عمان'], a:3, exp:'عمان عاصمة المملكة الأردنية الهاشمية.'},
+    {q:'ما عاصمة البرازيل؟', opts:['ريو دي جانيرو','ساو باولو','برازيليا','سلفادور'], a:2, exp:'برازيليا هي عاصمة البرازيل وليس ريو دي جانيرو!'},
+    {q:'ما أكبر دولة مساحةً في العالم؟', opts:['الصين','الولايات المتحدة','كندا','روسيا'], a:3, exp:'روسيا أكبر دولة في العالم بمساحة تتجاوز 17 مليون كم².'},
+    {q:'ما عاصمة أستراليا؟', opts:['سيدني','ملبورن','كانبيرا','بريسبان'], a:2, exp:'كانبيرا عاصمة أستراليا، لا سيدني التي يظنها كثيرون.'},
+    {q:'ما عاصمة مصر؟', opts:['الإسكندرية','الجيزة','القاهرة','أسوان'], a:2, exp:'القاهرة عاصمة مصر وأكبر مدنها.'},
+    {q:'في أي قارة تقع نيجيريا؟', opts:['آسيا','أوروبا','أمريكا','أفريقيا'], a:3, exp:'نيجيريا أكبر دول أفريقيا سكاناً وتقع في غربها.'},
+  ], medium:[
+    {q:'ما عاصمة كندا؟', opts:['تورنتو','مونتريال','فانكوفر','أوتاوا'], a:3, exp:'أوتاوا هي عاصمة كندا وليس تورنتو الأكبر سكاناً.'},
+    {q:'ما عاصمة الأرجنتين؟', opts:['ريو','مونتيفيديو','بيونس آيرس','سانتياغو'], a:2, exp:'بيونس آيرس عاصمة الأرجنتين وأكبر مدنها.'},
+    {q:'ما عاصمة النمسا؟', opts:['زيورخ','فيينا','برن','براغ'], a:1, exp:'فيينا عاصمة النمسا، مشهورة بالموسيقى الكلاسيكية.'},
+    {q:'كم عدد دول العالم تقريباً؟', opts:['150','175','193','210'], a:2, exp:'193 دولة أعضاء في الأمم المتحدة حتى الآن.'},
+    {q:'ما أصغر دولة في العالم؟', opts:['موناكو','سان مارينو','الفاتيكان','ليختنشتاين'], a:2, exp:'الفاتيكان أصغر دولة في العالم بمساحة 0.44 كم².'},
+    {q:'ما عاصمة تركيا؟', opts:['إسطنبول','أنقرة','إزمير','بورصة'], a:1, exp:'أنقرة عاصمة تركيا وليس إسطنبول الأكثر شهرة.'},
+    {q:'ما عاصمة جنوب أفريقيا الإدارية؟', opts:['كيب تاون','جوهانسبرغ','بريتوريا','ديربان'], a:2, exp:'بريتوريا هي العاصمة الإدارية لجنوب أفريقيا.'},
+    {q:'في أي قارة تقع المكسيك؟', opts:['أمريكا الجنوبية','أمريكا الشمالية','أمريكا الوسطى','كاريبي'], a:1, exp:'المكسيك تقع في أمريكا الشمالية وإن كانت جزءاً من أمريكا اللاتينية ثقافياً.'},
+  ], hard:[
+    {q:'ما عاصمة كازاخستان الجديدة؟', opts:['ألماتي','أستانا','أكتوبي','شيمكنت'], a:1, exp:'أستانا (سابقاً نور سلطان) هي عاصمة كازاخستان.'},
+    {q:'ما عاصمة ميانمار؟', opts:['يانغون','مانداليه','نيبيداو','باغو'], a:2, exp:'نيبيداو أصبحت عاصمة ميانمار عام 2006 خلفاً ليانغون.'},
+    {q:'ما أطول نهر في العالم؟', opts:['الأمازون','المسيسيبي','النيل','اليانغتسي'], a:2, exp:'النيل أطول نهر في العالم بطول يتجاوز 6650 كم.'},
+    {q:'ما عاصمة بوليفيا الحكومية؟', opts:['لاباز','سوكري','سانتا كروز','كوتشابامبا'], a:1, exp:'سوكري هي العاصمة الدستورية، لكن لاباز مقر الحكومة رسمياً.'},
+    {q:'ما أعلى قمة جبلية في العالم؟', opts:['K2','إيفرست','مكينلي','أكونكاغوا'], a:1, exp:'قمة إيفرست في الهيمالايا بارتفاع 8848 متراً هي الأعلى في العالم.'},
+    {q:'ما عاصمة سريلانكا؟', opts:['كولومبو','كاندي','جافنا','سري جايواردنابورا'], a:3, exp:'سري جايواردنابورا كوتي هي العاصمة الرسمية، وكولومبو العاصمة التجارية.'},
+    {q:'ما أكبر محيط في العالم؟', opts:['الأطلسي','الهندي','الهادي','المتجمد الشمالي'], a:2, exp:'المحيط الهادي أكبر محيطات العالم ويغطي نحو 46% من مساحة المحيطات.'},
+    {q:'كم عدد دول القارة الأفريقية؟', opts:['48','50','54','58'], a:2, exp:'أفريقيا تضم 54 دولة مستقلة معترفاً بها.'},
+  ]},
+
+  'رياضيات': { icon:'📐', grad:'linear-gradient(135deg,#e96c5a,#c0392b)', easy:[
+    {q:'كم ناتج 7 × 8؟', opts:['54','56','62','48'], a:1, exp:'7 × 8 = 56. يمكن حفظها كـ 7×8=56 بطريقة جدول الضرب.'},
+    {q:'ما هو الجذر التربيعي لـ 144؟', opts:['11','12','13','14'], a:1, exp:'√144 = 12 لأن 12 × 12 = 144.'},
+    {q:'كم عدد أضلاع المثلث؟', opts:['2','3','4','5'], a:1, exp:'المثلث شكل هندسي يحتوي على 3 أضلاع و3 زوايا.'},
+    {q:'ما ناتج 15 + 27؟', opts:['40','41','42','43'], a:2, exp:'15 + 27 = 42.'},
+    {q:'ما مجموع زوايا المثلث؟', opts:['90°','180°','270°','360°'], a:1, exp:'مجموع زوايا أي مثلث دائماً 180 درجة.'},
+    {q:'كم ناتج 100 ÷ 4؟', opts:['20','25','30','40'], a:1, exp:'100 ÷ 4 = 25.'},
+    {q:'ما هو الرقم الأولي بين 10 و20؟', opts:['11','15','16','18'], a:0, exp:'11 و13 أعداد أولية بين 10 و20. 11 هو أول الخيارات الصحيحة.'},
+    {q:'ما ناتج 9²؟', opts:['18','72','81','91'], a:2, exp:'9² = 9 × 9 = 81.'},
+  ], medium:[
+    {q:'إذا كان x + 5 = 12، فما قيمة x؟', opts:['5','6','7','8'], a:2, exp:'x = 12 - 5 = 7.'},
+    {q:'ما مساحة مستطيل طوله 8 وعرضه 5؟', opts:['26','30','40','13'], a:2, exp:'مساحة المستطيل = الطول × العرض = 8 × 5 = 40.'},
+    {q:'كم ناتج 15% من 200؟', opts:['20','25','30','35'], a:2, exp:'15% من 200 = (15 ÷ 100) × 200 = 30.'},
+    {q:'ما قيمة π تقريباً؟', opts:['3.14','3.41','2.71','3.16'], a:0, exp:'قيمة π (باي) تقريباً 3.14159، وتُستخدم في حسابات الدائرة.'},
+    {q:'ما محيط دائرة نصف قطرها 7؟', opts:['22','44','14','88'], a:1, exp:'محيط الدائرة = 2πr = 2 × 3.14 × 7 ≈ 44.'},
+    {q:'ما ناتج 2⁸؟', opts:['64','128','256','512'], a:2, exp:'2⁸ = 256 (2×2×2×2×2×2×2×2).'},
+    {q:'إذا كان 3x = 21، فما قيمة x؟', opts:['5','6','7','8'], a:2, exp:'x = 21 ÷ 3 = 7.'},
+    {q:'ما هو ناتج 0.5 × 0.5؟', opts:['1','0.5','0.25','0.1'], a:2, exp:'0.5 × 0.5 = 0.25 أو ربع.'},
+  ], hard:[
+    {q:'ما حل المعادلة x² - 9 = 0؟', opts:['x=3 فقط','x=±3','x=9','x=±9'], a:1, exp:'x² = 9، إذاً x = ±3 (موجب أو سالب).'},
+    {q:'ما ناتج log₁₀(1000)؟', opts:['2','3','4','10'], a:1, exp:'log₁₀(1000) = 3 لأن 10³ = 1000.'},
+    {q:'كم عدد الأوجه في المكعب؟', opts:['4','6','8','12'], a:1, exp:'المكعب له 6 وجوه مربعة متساوية.'},
+    {q:'ما مشتقة x³ بالنسبة لـ x؟', opts:['x²','2x²','3x²','3x'], a:2, exp:'مشتقة xⁿ = n·xⁿ⁻¹، إذاً مشتقة x³ = 3x².'},
+    {q:'إذا كانت P(A) = 0.4، ما P(A\')؟', opts:['0.4','0.6','1.4','0.2'], a:1, exp:'P(A\') = 1 - P(A) = 1 - 0.4 = 0.6 (الحادثة المكملة).'},
+    {q:'ما ناتج sin(90°)؟', opts:['0','0.5','1','√2'], a:2, exp:'sin(90°) = 1 وهو أعلى قيمة لدالة الجيب.'},
+    {q:'ما قيمة 5! (5 مضروبة)؟', opts:['25','60','120','125'], a:2, exp:'5! = 5×4×3×2×1 = 120.'},
+    {q:'ما ناتج cos(0°)؟', opts:['0','1','-1','0.5'], a:1, exp:'cos(0°) = 1 وهو أعلى قيمة لدالة الجيب التمام.'},
+  ]},
+
+  'إنجليزي': { icon:'🔤', grad:'linear-gradient(135deg,#4facfe,#00f2fe)', easy:[
+    {q:'ما معنى كلمة "Happy" بالعربي؟', opts:['حزين','غاضب','سعيد','خائف'], a:2, exp:'"Happy" تعني سعيد أو مسرور بالعربي.'},
+    {q:'ما مقابل "Good Morning" بالعربي؟', opts:['مساء الخير','صباح الخير','تصبح على خير','أهلاً'], a:1, exp:'"Good Morning" تعني صباح الخير.'},
+    {q:'ما معنى "Beautiful"؟', opts:['قبيح','جميل','كبير','صغير'], a:1, exp:'"Beautiful" تعني جميل أو رائع.'},
+    {q:'كيف نقول "كتاب" بالإنجليزية؟', opts:['Pen','Desk','Book','Page'], a:2, exp:'"Book" تعني كتاب بالإنجليزية.'},
+    {q:'ما معنى "Water"؟', opts:['هواء','نار','ماء','تراب'], a:2, exp:'"Water" تعني ماء بالعربي.'},
+    {q:'ما مفرد "Children"؟', opts:['Childs','Child','Childes','Childrens'], a:1, exp:'"Child" مفرد "Children" وتعني طفل.'},
+    {q:'ما معنى "Fast"؟', opts:['بطيء','ثقيل','سريع','خفيف'], a:2, exp:'"Fast" تعني سريع، والعكس "Slow" بطيء.'},
+    {q:'أي كلمة تعني "مدرسة"؟', opts:['Hospital','School','Library','Museum'], a:1, exp:'"School" تعني مدرسة بالإنجليزية.'},
+  ], medium:[
+    {q:'ما الفرق بين "Their" و"There"؟', opts:['لا فرق','Their ملكية وThere مكان','There ملكية وTheir مكان','كلاهما مكان'], a:1, exp:'"Their" تعني "ملكهم"، و"There" تعني "هناك" (مكان).'},
+    {q:'ما الصيغة الصحيحة؟', opts:['He go to school','He goes to school','He going to school','He gone to school'], a:1, exp:'مع الضمائر He/She/It نضيف s للفعل: goes.'},
+    {q:'ما معنى "Although"؟', opts:['لأن','لذلك','بالرغم من','إذا'], a:2, exp:'"Although" تعني "بالرغم من" أو "على الرغم من".'},
+    {q:'ما الجمع الصحيح لـ "Tooth"؟', opts:['Tooths','Teethes','Teeth','Teeths'], a:2, exp:'"Teeth" جمع "Tooth" (سن). هذا جمع شاذ غير منتظم.'},
+    {q:'ما معنى "Approximately"؟', opts:['بالضبط','تقريباً','بالتأكيد','بالطبع'], a:1, exp:'"Approximately" تعني تقريباً أو على وجه التقريب.'},
+    {q:'ما الزمن الصحيح لـ "She ___ to Paris last year"؟', opts:['go','goes','went','has gone'], a:2, exp:'"Went" الماضي البسيط لـ Go، يُستخدم مع last year.'},
+    {q:'ما معنى "Perseverance"؟', opts:['اليأس','الإرهاق','المثابرة','السعادة'], a:2, exp:'"Perseverance" تعني المثابرة والإصرار على المضي قدماً.'},
+    {q:'ما الفرق بين "Accept" و"Except"؟', opts:['لا فرق','Accept قبول وExcept استثناء','Except قبول وAccept استثناء','كلاهما رفض'], a:1, exp:'"Accept" تعني يقبل، و"Except" تعني ما عدا / باستثناء.'},
+  ], hard:[
+    {q:'ما معنى "Ephemeral"؟', opts:['دائم','عميق','مؤقت وزائل','ضروري'], a:2, exp:'"Ephemeral" تعني زائل أو قصير الأمد، مأخوذة من اليونانية.'},
+    {q:'ما صيغة المبني للمجهول لـ "They built the house"؟', opts:['The house was built','The house built','The house is built','The house has built'], a:0, exp:'"The house was built" المبني للمجهول في الماضي = was/were + past participle.'},
+    {q:'ما معنى المصطلح "Oxymoron"؟', opts:['استعارة','تناقض لفظي','كناية','تشبيه'], a:1, exp:'"Oxymoron" يعني تناقض لفظي كـ"صمت مدوٍّ" — تركيب من كلمتين متضادتين.'},
+    {q:'ما الكلمة التي تعني "Ubiquitous"؟', opts:['نادر','موجود في كل مكان','غامض','ثمين'], a:1, exp:'"Ubiquitous" تعني موجود في كل مكان أو شائع جداً.'},
+    {q:'ما صحيح نحوياً؟', opts:['If I was you','If I were you','If I am you','If I be you'], a:1, exp:'"If I were you" الصحيح — في الجمل الشرطية التمنية نستخدم "were" مع جميع الضمائر.'},
+    {q:'ما معنى "Sycophant"؟', opts:['بطل','متملق','حكيم','متواضع'], a:1, exp:'"Sycophant" تعني متملق أو شخص يتزلف للآخرين.'},
+    {q:'ما الفرق بين "Affect" و"Effect"؟', opts:['لا فرق','Affect فعل وEffect اسم','Effect فعل وAffect اسم','كلاهما فعل'], a:1, exp:'Affect فعل يعني "يؤثر"، Effect اسم يعني "التأثير" أو "النتيجة".'},
+    {q:'ما معنى "Ambiguous"؟', opts:['واضح','غامض وملتبس','ممتاز','مبالغ فيه'], a:1, exp:'"Ambiguous" يعني غامض أو يحتمل أكثر من تفسير.'},
+  ]},
+
+  'ثقافة عامة': { icon:'💡', grad:'linear-gradient(135deg,#fa709a,#fee140)', easy:[
+    {q:'كم عدد ألوان قوس قزح؟', opts:['5','6','7','8'], a:2, exp:'قوس قزح يحتوي على 7 ألوان: أحمر، برتقالي، أصفر، أخضر، أزرق، نيلي، بنفسجي.'},
+    {q:'ما أكبر كوكب في المجموعة الشمسية؟', opts:['زحل','المشتري','أورانوس','نبتون'], a:1, exp:'المشتري أكبر كواكب المجموعة الشمسية بقطر 142,984 كم.'},
+    {q:'كم عدد أيام السنة العادية؟', opts:['364','365','366','367'], a:1, exp:'السنة العادية 365 يوماً، والسنة الكبيسة 366 يوماً.'},
+    {q:'ما لغة البرمجة الأكثر شهرة لمواقع الويب؟', opts:['Python','Java','JavaScript','C++'], a:2, exp:'JavaScript هي اللغة الأساسية لتطوير الويب التفاعلي.'},
+    {q:'ما أسرع حيوان بري؟', opts:['الأسد','النمر','الفهد','الغزال'], a:2, exp:'الفهد أسرع حيوان بري يصل لـ 120 كم/ساعة.'},
+    {q:'كم عدد نغمات السلم الموسيقي؟', opts:['5','6','7','8'], a:2, exp:'السلم الموسيقي يتكون من 7 نغمات: دو، ري، مي، فا، صول، لا، سي.'},
+    {q:'ما أطول عظمة في جسم الإنسان؟', opts:['عظمة الذراع','عظمة الفخذ','عظمة الظهر','عظمة الساق'], a:1, exp:'عظمة الفخذ (الفمور) أطول وأقوى عظمة في جسم الإنسان.'},
+    {q:'ما اختصار شركة IBM؟', opts:['International Business Machines','Internet Business Management','Integrated Binary Matrix','International Binary Models'], a:0, exp:'IBM تعني International Business Machines، تأسست عام 1911.'},
+  ], medium:[
+    {q:'من اخترع الهاتف؟', opts:['إيديسون','تيسلا','غراهام بيل','ماركوني'], a:2, exp:'اخترع ألكسندر غراهام بيل الهاتف عام 1876.'},
+    {q:'ما أول فيلم ناطق في تاريخ السينما؟', opts:['سيد الخواتم','مغني الجاز','شندلرز ليست','كازابلانكا'], a:1, exp:'"مغني الجاز" عام 1927 هو أول فيلم ناطق في تاريخ السينما.'},
+    {q:'كم ضلعاً في السداسي المنتظم؟', opts:['4','5','6','7'], a:2, exp:'السداسي المنتظم له 6 أضلاع متساوية، كخلية النحل.'},
+    {q:'من كتب رواية 1984؟', opts:['هاكسلي','أورويل','كافكا','هيمنغواي'], a:1, exp:'رواية 1984 كتبها جورج أورويل ونُشرت عام 1949.'},
+    {q:'ما عدد عظام جسم الإنسان البالغ؟', opts:['196','206','216','226'], a:1, exp:'جسم الإنسان البالغ يحتوي على 206 عظمة.'},
+    {q:'ما أعمق بحيرة في العالم؟', opts:['بايكال','تيتيكاكا','سبيريور','فيكتوريا'], a:0, exp:'بحيرة بايكال في روسيا أعمق بحيرة في العالم بعمق 1642 متراً.'},
+    {q:'من رسم لوحة الموناليزا؟', opts:['مايكل أنجلو','رافاييل','دافنشي','بيكاسو'], a:2, exp:'ليوناردو دافنشي رسم لوحة الموناليزا بين 1503 و1519.'},
+    {q:'ما أكثر لغة تحدثاً في العالم؟', opts:['الإنجليزية','الإسبانية','المندرينية','العربية'], a:2, exp:'المندرينية (الصينية) أكثر لغة من حيث عدد متحدثيها الأصليين.'},
+  ], hard:[
+    {q:'من اكتشف الجاذبية؟', opts:['أينشتاين','غاليليو','نيوتن','أرشميدس'], a:2, exp:'إسحاق نيوتن صاغ قانون الجاذبية الكونية عام 1687.'},
+    {q:'ما عدد نجوم علم الاتحاد الأوروبي؟', opts:['10','12','15','27'], a:1, exp:'علم الاتحاد الأوروبي يحمل 12 نجمة تمثل الكمال وليس عدد الدول.'},
+    {q:'من ألّف سيمفونية القدر (رقم 5)؟', opts:['موزار','باخ','بيتهوفن','هايدن'], a:2, exp:'لودفيغ فان بيتهوفن ألّف السيمفونية الخامسة "القدر" عام 1808.'},
+    {q:'ما نظرية الفيلسوف توماس هوبز عن الحكم؟', opts:['الديمقراطية المطلقة','العقد الاجتماعي والسلطة المطلقة','اللاسلطوية','الحكم الديني'], a:1, exp:'هوبز في كتاب "لفياثان" طرح العقد الاجتماعي وضرورة سلطة مركزية قوية.'},
+    {q:'ما تقنية الـ Blockchain الأساسية؟', opts:['قاعدة بيانات مركزية','سلسلة كتل موزعة لا مركزية','خادم سحابي','نظام تشفير مركزي'], a:1, exp:'Blockchain سلسلة كتل لا مركزية موزعة — لا يتحكم بها أحد منفرداً.'},
+    {q:'ما مبدأ التفكير النقدي "Occam\'s Razor"؟', opts:['الحل الأبسط هو الأصح','لكل مشكلة حل معقد','الشك في كل شيء','التجربة قبل النظرية'], a:0, exp:'شفرة أوكام: لا تُضاعف الكيانات بلا ضرورة — الشرح الأبسط غالباً الأصح.'},
+    {q:'ما عام إطلاق أول قمر صناعي "سبوتنيك"؟', opts:['1952','1955','1957','1961'], a:2, exp:'أطلق الاتحاد السوفيتي سبوتنيك 1 عام 1957 وكان أول قمر صناعي في التاريخ.'},
+    {q:'ما أصل كلمة "Algorithm"؟', opts:['يونانية','من اسم عالم رياضيات عربي','لاتينية','فارسية'], a:1, exp:'"Algorithm" مشتقة من اسم العالم العربي الخوارزمي، مؤسس علم الجبر.'},
+  ]},
+
+  'تقنية': { icon:'💻', grad:'linear-gradient(135deg,#667eea,#764ba2)', easy:[
+    {q:'ماذا يعني اختصار HTML؟', opts:['لغة ترميز النص التشعبي','لغة البرمجة العالية','نظام إدارة النصوص','واجهة المستخدم'], a:0, exp:'HTML = HyperText Markup Language — لغة بناء صفحات الويب.'},
+    {q:'أي متصفح الأكثر استخداماً؟', opts:['Firefox','Safari','Chrome','Edge'], a:2, exp:'Chrome يستحوذ على أكثر من 60% من سوق المتصفحات.'},
+    {q:'ما لغة تصميم صفحات الويب؟', opts:['Python','CSS','Java','C++'], a:1, exp:'CSS = Cascading Style Sheets لتنسيق مظهر صفحات الويب.'},
+    {q:'ما معنى USB؟', opts:['Universal Serial Bus','Unified System Base','Universal System Bit','Ultra Serial Band'], a:0, exp:'USB = Universal Serial Bus، معيار توصيل الأجهزة الطرفية.'},
+    {q:'ما أشهر نظام تشغيل للهاتف؟', opts:['Windows','macOS','Android','Linux'], a:2, exp:'Android من Google أكثر أنظمة تشغيل الهاتف استخداماً في العالم.'},
+    {q:'ما معنى Wi-Fi؟', opts:['Wireless Fidelity','Wide Frequency','Wireless Firmware','Wire Free'], a:0, exp:'Wi-Fi = Wireless Fidelity، تقنية الاتصال اللاسلكي.'},
+    {q:'ما أول لغة برمجة في التاريخ؟', opts:['C','Fortran','Assembly','Ada'], a:3, exp:'يعتبر Fortran (1957) أول لغة برمجة عالية المستوى، لكن Ada Lovelace كتبت أول خوارزمية.'},
+    {q:'ما امتداد ملفات Excel؟', opts:['.doc','.ppt','.xlsx','.pdf'], a:2, exp:'ملفات Microsoft Excel تحمل امتداد .xlsx.'},
+  ], medium:[
+    {q:'ما بروتوكول نقل البيانات الآمن؟', opts:['HTTP','FTP','HTTPS','SSH'], a:2, exp:'HTTPS يضيف تشفير SSL/TLS لحماية البيانات المنقولة.'},
+    {q:'الفرق بين RAM وROM؟', opts:['RAM مؤقتة وROM دائمة','العكس','كلاهما مؤقتتان','كلاهما دائمتان'], a:0, exp:'RAM مؤقتة تُمسح عند الإغلاق، ROM دائمة لا تُمسح.'},
+    {q:'ماذا تعني API؟', opts:['تطبيق برمجي آمن','واجهة برمجة التطبيقات','بروتوكول الإنترنت','أداة البرمجة الآلية'], a:1, exp:'API = Application Programming Interface — وسيلة التواصل بين التطبيقات.'},
+    {q:'ما معنى VPN؟', opts:['Virtual Private Network','Very Personal Network','Virtual Public Node','Visual Processing Net'], a:0, exp:'VPN = Virtual Private Network — شبكة افتراضية خاصة لتأمين الاتصال.'},
+    {q:'ما معنى SSD؟', opts:['Super Speed Drive','Solid State Drive','Secondary Storage Device','Solid System Disk'], a:1, exp:'SSD = Solid State Drive — وحدة تخزين أسرع وأصمت من HDD.'},
+    {q:'ما لغة برمجة تطبيقات iOS؟', opts:['Java','Kotlin','Swift','C#'], a:2, exp:'Swift لغة برمجة Apple الرسمية لتطوير تطبيقات iOS وmacOS.'},
+    {q:'ما خوارزمية البحث الأسرع في قائمة مرتبة؟', opts:['Linear Search','Binary Search','Bubble Search','Hash Search'], a:1, exp:'Binary Search تعمل بتعقيد O(log n) على القوائم المرتبة.'},
+    {q:'ما معنى DNS؟', opts:['Dynamic Network Server','Domain Name System','Data Navigation Service','Digital Node Switch'], a:1, exp:'DNS = Domain Name System — يُحوِّل أسماء المواقع لعناوين IP.'},
+  ], hard:[
+    {q:'تعقيد خوارزمية Quicksort في أسوأ حالة؟', opts:['O(n)','O(n log n)','O(n²)','O(log n)'], a:2, exp:'أسوأ حالة لـ Quicksort هي O(n²)، لكن المتوسط O(n log n).'},
+    {q:'ما مبدأ SOLID الأول؟', opts:['Open/Closed','Liskov Substitution','Single Responsibility','Interface Segregation'], a:2, exp:'S = Single Responsibility — كل كلاس مسؤول عن شيء واحد فقط.'},
+    {q:'الفرق بين SQL وNoSQL؟', opts:['SQL أسرع دائماً','SQL جداول وNoSQL مستندات','NoSQL أقدم','لا فرق'], a:1, exp:'SQL جداول علائقية منتظمة، NoSQL مستندات ورسوم بيانية أكثر مرونة.'},
+    {q:'ما بروتوكول TCP في نموذج OSI؟', opts:['الطبقة 1','الطبقة 3','الطبقة 4','الطبقة 7'], a:2, exp:'TCP في الطبقة الرابعة (Transport Layer) من نموذج OSI.'},
+    {q:'ما تقنية Docker؟', opts:['لغة برمجة','نظام تشغيل','تقنية حاويات للتطبيقات','قاعدة بيانات'], a:2, exp:'Docker تقنية حاويات تُغلِّف التطبيق ومتطلباته معاً لتشغيله أينما كان.'},
+    {q:'ما معنى CORS في تطوير الويب؟', opts:['Cross-Origin Resource Sharing','Central Object Request System','Client Object Rendering Service','Core Object Resource Sync'], a:0, exp:'CORS = Cross-Origin Resource Sharing — يتحكم في الطلبات بين نطاقات مختلفة.'},
+    {q:'ما الفرق بين Authentication وAuthorization؟', opts:['لا فرق','Auth=التحقق من الهوية وAuthz=تحديد الصلاحيات','Auth=الصلاحيات وAuthz=الهوية','كلاهما تشفير'], a:1, exp:'Authentication = التحقق من هويتك، Authorization = تحديد ما يُسمح لك به.'},
+    {q:'ما معنى مصطلح "Idempotent" في REST API؟', opts:['تنفيذ سريع','نفس النتيجة عند التكرار','طلب مشفر','رد فوري'], a:1, exp:'Idempotent يعني أن تكرار نفس الطلب يُعطي نفس النتيجة (مثل GET وPUT).'},
+  ]},
+
+  'علوم': { icon:'🔬', grad:'linear-gradient(135deg,#11998e,#38ef7d)', easy:[
+    {q:'سرعة الضوء تقريباً؟', opts:['300,000 كم/ث','150,000 كم/ث','600,000 كم/ث','30,000 كم/ث'], a:0, exp:'سرعة الضوء في الفراغ 299,792 كيلومتراً في الثانية.'},
+    {q:'الرمز الكيميائي للذهب؟', opts:['Go','Gd','Au','Ag'], a:2, exp:'رمز الذهب Au من كلمة Aurum اللاتينية.'},
+    {q:'كم عدد كواكب المجموعة الشمسية؟', opts:['7','8','9','10'], a:1, exp:'8 كواكب منذ 2006 عندما صُنِّف بلوتو "كوكب قزم".'},
+    {q:'أكبر عضو في جسم الإنسان؟', opts:['الكبد','الدماغ','الجلد','القلب'], a:2, exp:'الجلد أكبر عضو بمساحة 1.5–2 متر مربع.'},
+    {q:'ما الجهاز المسؤول عن ضخ الدم؟', opts:['الرئتان','الكبد','القلب','الكلية'], a:2, exp:'القلب مضخة عضلية تضخ الدم عبر الجسم.'},
+    {q:'ما الرمز الكيميائي للأكسجين؟', opts:['O','Ox','Og','Os'], a:0, exp:'رمز الأكسجين O والعدد الذري 8.'},
+    {q:'ما أصغر وحدة حية؟', opts:['الذرة','الجزيء','الخلية','النسيج'], a:2, exp:'الخلية هي أصغر وحدة حية قادرة على القيام بالوظائف الحيوية.'},
+    {q:'ما مصدر طاقة الشمس؟', opts:['الاحتراق','التفاعل النووي الاندماجي','الطاقة الكيميائية','التفاعل الانشطاري'], a:1, exp:'الشمس تنتج طاقتها من الاندماج النووي لنوى الهيدروجين لتكوين الهيليوم.'},
+  ], medium:[
+    {q:'الكروموسومات في خلية الإنسان؟', opts:['23','44','46','48'], a:2, exp:'46 كروموسوماً (23 زوجاً) في الخلية الطبيعية.'},
+    {q:'الغاز الأكثر في الغلاف الجوي؟', opts:['الأكسجين','ثاني أكسيد الكربون','النيتروجين','الهيدروجين'], a:2, exp:'النيتروجين 78% من الغلاف الجوي للأرض.'},
+    {q:'وحدة قياس القوة؟', opts:['واط','جول','نيوتن','باسكال'], a:2, exp:'النيوتن وحدة القوة في النظام الدولي SI.'},
+    {q:'الرقم الذري للكربون؟', opts:['4','6','8','12'], a:1, exp:'الكربون رقمه الذري 6، له 6 بروتونات في نواته.'},
+    {q:'ما قانون نيوتن الثالث؟', opts:['قانون القصور الذاتي','قانون التسارع','قانون الفعل ورد الفعل','قانون الجاذبية'], a:2, exp:'لكل فعل رد فعل مساوٍ له في المقدار ومعاكس في الاتجاه.'},
+    {q:'ما الوحدة الأساسية للمادة؟', opts:['الجزيء','الذرة','الإلكترون','البروتون'], a:1, exp:'الذرة هي الوحدة الأساسية للمادة وتتكون من بروتونات ونيوترونات وإلكترونات.'},
+    {q:'ما عملية تحويل الضوء لطاقة كيميائية في النباتات؟', opts:['التنفس','البناء الضوئي','الهضم','الأيض'], a:1, exp:'البناء الضوئي (التركيب الضوئي) يحول الضوء وثاني أكسيد الكربون والماء إلى غلوكوز.'},
+    {q:'ما أكثر عنصر وفرة في قشرة الأرض؟', opts:['الحديد','الألومنيوم','الأكسجين','السيليكون'], a:2, exp:'الأكسجين أكثر عنصر في قشرة الأرض بنسبة 46%.'},
+  ], hard:[
+    {q:'معادلة أينشتاين؟', opts:['E=mv²','E=mc²','E=mgh','E=½mv²'], a:1, exp:'E=mc² — الطاقة = الكتلة × مربع سرعة الضوء.'},
+    {q:'مبدأ عدم اليقين نسب إلى؟', opts:['نيوتن','أينشتاين','هايزنبرغ','بور'], a:2, exp:'مبدأ هايزنبرغ: لا يمكن تحديد موضع وزخم الجسيم في آنٍ معاً بدقة.'},
+    {q:'درجة حرارة الصفر المطلق؟', opts:['-100°C','-273.15°C','-373°C','-200°C'], a:1, exp:'الصفر المطلق −273.15°C أو 0 كلفن — أدنى درجة حرارة ممكنة.'},
+    {q:'ما يُسبب ظاهرة الاحتباس الحراري؟', opts:['الأوزون','ثاني أكسيد الكربون','الأكسجين','النيتروجين'], a:1, exp:'ثاني أكسيد الكربون والميثان أبرز غازات الاحتباس الحراري.'},
+    {q:'ما نوع الموجات الكهرومغناطيسية الأقصر موجة؟', opts:['الأشعة تحت الحمراء','الأشعة فوق البنفسجية','أشعة X','أشعة غاما'], a:3, exp:'أشعة غاما أقصر موجة وأعلى تردد في الطيف الكهرومغناطيسي.'},
+    {q:'ما الفرق بين الانشطار والاندماج النووي؟', opts:['لا فرق','الانشطار تقسيم نواة كبيرة، الاندماج دمج نوى صغيرة','العكس','كلاهما تقسيم'], a:1, exp:'الانشطار تقسيم نواة ثقيلة (كاليورانيوم)، الاندماج دمج نوى خفيفة (كالهيدروجين) — الشمس تعمل بالاندماج.'},
+    {q:'ما تردد موجات الراديو مقارنة بالضوء المرئي؟', opts:['أعلى','أقل','مساوٍ','لا علاقة'], a:1, exp:'موجات الراديو أطول موجة وأقل تردداً في الطيف الكهرومغناطيسي.'},
+    {q:'ما الجسيم دون الذري الذي يحدد العنصر الكيميائي؟', opts:['النيوترون','الإلكترون','البروتون','الكوارك'], a:2, exp:'عدد البروتونات (الرقم الذري) هو ما يميز كل عنصر كيميائي.'},
+  ]},
+
+  'تاريخ': { icon:'🏛️', grad:'linear-gradient(135deg,#f7971e,#ffd200)', easy:[
+    {q:'عام اكتشاف كولومبس لأمريكا؟', opts:['1488','1492','1500','1510'], a:1, exp:'كريستوفر كولومبس وصل للأمريكتين 12 أكتوبر 1492.'},
+    {q:'عاصمة الخلافة العباسية؟', opts:['دمشق','القاهرة','بغداد','سمرقند'], a:2, exp:'بغداد عاصمة الخلافة العباسية منذ تأسيسها 762م.'},
+    {q:'متى بدأت الحرب العالمية الأولى؟', opts:['1912','1914','1916','1918'], a:1, exp:'اندلعت في أغسطس 1914 وانتهت 1918.'},
+    {q:'من بنى الأهرامات؟', opts:['الرومان','الإغريق','الفراعنة','الفينيقيون'], a:2, exp:'الفراعنة بنوا الأهرامات كمقابر منذ 4500 عام.'},
+    {q:'أين وُلد النبي محمد ﷺ؟', opts:['المدينة المنورة','مكة المكرمة','الطائف','جدة'], a:1, exp:'وُلد النبي ﷺ في مكة المكرمة عام 570م.'},
+    {q:'متى سقط الاتحاد السوفيتي؟', opts:['1989','1990','1991','1992'], a:2, exp:'انهار الاتحاد السوفيتي رسمياً في 25 ديسمبر 1991.'},
+    {q:'من اخترع الطباعة؟', opts:['غوتنبرغ','إيديسون','داغير','فاراداي'], a:0, exp:'يوهانس غوتنبرغ اخترع المطبعة عام 1440 وغيّر مسار التاريخ.'},
+    {q:'ما الحضارة التي بنت المسلة؟', opts:['الرومانية','الإغريقية','الفرعونية','الفينيقية'], a:2, exp:'المسلات أبراج حجرية شيّدها الفراعنة لتخليد ذكرى الأحداث.'},
+  ], medium:[
+    {q:'عام سقوط القسطنطينية؟', opts:['1347','1453','1492','1517'], a:1, exp:'سقطت القسطنطينية 1453م على يد السلطان محمد الفاتح.'},
+    {q:'مؤسس الدولة العثمانية؟', opts:['سليمان','محمد الفاتح','عثمان الأول','سليم الأول'], a:2, exp:'عثمان الأول مؤسس الدولة العثمانية عام 1299م.'},
+    {q:'أطول حرب في التاريخ الحديث؟', opts:['الحرب العالمية الأولى','حرب المئة عام','الثلاثين عاماً','فيتنام'], a:1, exp:'حرب المئة عام بين إنجلترا وفرنسا (1337-1453).'},
+    {q:'متى بدأت الثورة الفرنسية؟', opts:['1776','1785','1789','1793'], a:2, exp:'الثورة الفرنسية بدأت 1789 وانتهت بإعدام لويس السادس عشر 1793.'},
+    {q:'من اكتشف أمريكا فعلياً قبل كولومبس؟', opts:['الفايكنج','البرتغاليون','الصينيون','الأفارقة'], a:0, exp:'الفايكنج بقيادة ليف إريكسون وصلوا لأمريكا الشمالية حوالي عام 1000م.'},
+    {q:'في أي عام أُعلنت استقلالية الولايات المتحدة؟', opts:['1773','1775','1776','1783'], a:2, exp:'أُعلن استقلال الولايات المتحدة في 4 يوليو 1776.'},
+    {q:'من هو أول رئيس للولايات المتحدة؟', opts:['أبراهام لينكولن','جورج واشنطن','توماس جيفرسون','جون آدامز'], a:1, exp:'جورج واشنطن أول رئيس للولايات المتحدة (1789-1797).'},
+    {q:'ما الإمبراطورية التي وصفت بأن الشمس لا تغيب عنها؟', opts:['الرومانية','المغولية','العثمانية','البريطانية'], a:3, exp:'قيل عن الإمبراطورية البريطانية "لا تغيب عنها الشمس" لاتساعها الجغرافي.'},
+  ], hard:[
+    {q:'معركة الهزيمة النهائية لنابليون؟', opts:['أوسترليتز','واترلو','بورودينو','ليبزيغ'], a:1, exp:'معركة واترلو 1815 — الهزيمة الحاسمة لنابليون بونابرت.'},
+    {q:'أول دولة تمنح المرأة حق التصويت؟', opts:['المملكة المتحدة','الولايات المتحدة','نيوزيلندا','فرنسا'], a:2, exp:'نيوزيلندا أول دولة تمنح المرأة حق التصويت عام 1893.'},
+    {q:'عام معركة القادسية الإسلامية؟', opts:['634م','636م','638م','640م'], a:1, exp:'معركة القادسية 636م حسمت السيطرة الإسلامية على بلاد فارس.'},
+    {q:'ما الحدث الذي أشعل الحرب العالمية الأولى؟', opts:['غزو بولندا','اغتيال ولي عهد النمسا','غرق تيتانيك','ثورة روسيا'], a:1, exp:'اغتيال الأرشيدوق فرانز فرديناند في سراييفو يونيو 1914 أشعل الحرب.'},
+    {q:'ما الاتفاقية التي وضعت حدود أوروبا بعد الحرب العالمية الأولى؟', opts:['مؤتمر فيينا','اتفاقية برلين','معاهدة فرساي','ميثاق الأطلنطي'], a:2, exp:'معاهدة فرساي 1919 أعادت رسم خارطة أوروبا وفرضت عقوبات على ألمانيا.'},
+    {q:'متى سقط جدار برلين؟', opts:['1987','1988','1989','1990'], a:2, exp:'سقط جدار برلين في 9 نوفمبر 1989، رمزاً لنهاية الحرب الباردة.'},
+    {q:'ما اسم السفينة التي غرقت عام 1912؟', opts:['أوليمبيك','لوزيتانيا','تيتانيك','موريتانيا'], a:2, exp:'تيتانيك غرقت في 15 أبريل 1912 بعد اصطدامها بجبل جليدي.'},
+    {q:'من قاد الثورة البولشيفية في روسيا؟', opts:['ستالين','تروتسكي','لينين','خروتشوف'], a:2, exp:'فلاديمير لينين قاد الثورة البولشيفية في أكتوبر 1917.'},
+  ]},
+
+  'رياضة': { icon:'⚽', grad:'linear-gradient(135deg,#f953c6,#b91d73)', easy:[
+    {q:'عدد لاعبي كرة القدم في الفريق؟', opts:['9','10','11','12'], a:2, exp:'11 لاعباً أساسياً في كل فريق.'},
+    {q:'مدة مباراة كرة القدم؟', opts:['80 دقيقة','90 دقيقة','100 دقيقة','120 دقيقة'], a:1, exp:'90 دقيقة — شوطان 45 دقيقة.'},
+    {q:'كم مرة فازت البرازيل بكأس العالم؟', opts:['3','4','5','6'], a:2, exp:'البرازيل فازت 5 مرات: 1958، 1962، 1970، 1994، 2002.'},
+    {q:'أين ظهرت كرة القدم الحديثة؟', opts:['إسبانيا','البرازيل','إنجلترا','إيطاليا'], a:2, exp:'إنجلترا وضعت قواعد كرة القدم عام 1863.'},
+    {q:'أي رياضة تستخدم المضرب والريشة؟', opts:['التنس','البادمنتون','سكواش','بينج بونج'], a:1, exp:'البادمنتون يستخدم مضرب خفيف وريشة خاصة.'},
+    {q:'كم نقطة تساوي المحاولة في الرغبي؟', opts:['3','4','5','6'], a:2, exp:'المحاولة (Try) في الرغبي تساوي 5 نقاط.'},
+    {q:'كم مسبحاً في حمام السباحة الأولمبي؟', opts:['6','7','8','10'], a:2, exp:'حمام السباحة الأولمبي يحتوي على 8 مسابح (ممرات).'},
+    {q:'في أي رياضة يُستخدم الفرس؟', opts:['الجودو','الكاراتيه','الجمباز','الفروسية'], a:3, exp:'الفروسية رياضة يقوم فيها الرياضي بامتطاء الخيل.'},
+  ], medium:[
+    {q:'الهداف التاريخي لكأس العالم؟', opts:['رونالدو','ميسي','كلوزه','فونتين'], a:2, exp:'ميرسلاف كلوزه سجل 16 هدفاً في كؤوس العالم.'},
+    {q:'أطول سباق في الألعاب الأولمبية؟', opts:['5000م','10000م','ماراثون','المشي 50كم'], a:2, exp:'الماراثون 42.195 كيلومتراً أطول سباق جري أولمبي.'},
+    {q:'كم ضربة تحت الباقي تُسمى "العقاب" في الغولف؟', opts:['1','2','3','4'], a:2, exp:'ثلاث ضربات تحت الباقي في الغولف تُسمى "العقاب" (Albatross).'},
+    {q:'كم عدد لاعبي كرة السلة؟', opts:['4','5','6','7'], a:1, exp:'5 لاعبين من كل فريق في كرة السلة.'},
+    {q:'ما أسرع لاعب ركض 100م في التاريخ؟', opts:['كارل لويس','أوسين بولت','عساه باول','تايسون غاي'], a:1, exp:'أوسين بولت سجل 9.58 ثانية في برلين 2009 — رقم قياسي عالمي.'},
+    {q:'كم قدماً طول ملعب البيسبول من القاعدة للقاعدة؟', opts:['60','80','90','100'], a:2, exp:'المسافة بين القواعد في البيسبول 90 قدماً (27.4 متر).'},
+    {q:'في أي رياضة تُستخدم المبارزة؟', opts:['الجودو','المصارعة','الإيكيدو','المبارزة بالسيف'], a:3, exp:'المبارزة بالسيف (Fencing) رياضة أولمبية تستخدم أسلحة خاصة.'},
+    {q:'ما الرياضة التي يلعبها روجر فيدرر؟', opts:['الغولف','التنس','السكواش','بادمنتون'], a:1, exp:'روجر فيدرر لاعب تنس سويسري يُعتبر من أعظم لاعبيه على الإطلاق.'},
+  ], hard:[
+    {q:'من فاز بأول دوري أبطال أوروبا؟', opts:['برشلونة','ريال مدريد','ميلان','يوفنتوس'], a:1, exp:'ريال مدريد فاز بأول نسخة عام 1956.'},
+    {q:'عام تأسيس ريال مدريد؟', opts:['1896','1900','1902','1905'], a:2, exp:'تأسس ريال مدريد في 6 مارس 1902.'},
+    {q:'كم مرة فاز مايكل جوردان بـNBA؟', opts:['4','5','6','7'], a:2, exp:'جوردان فاز بـNBA 6 مرات مع شيكاغو بولز.'},
+    {q:'ما أطول سلسلة انتصارات متتالية في دوري NBA؟', opts:['20','28','33','41'], a:2, exp:'لوس أنجلوس ليكرز سجلوا 33 انتصاراً متتالياً موسم 1971-72 — رقم قياسي.'},
+    {q:'كم كيلومتراً يقطع سباق الترياثلون الأولمبي؟', opts:['25','51.5','70','113'], a:1, exp:'الترياثلون الأولمبي: 1.5 كم سباحة + 40 كم دراجة + 10 كم جري = 51.5 كم.'},
+    {q:'ما أعلى نقطة سجلها لاعب في مباراة NBA واحدة؟', opts:['81','93','100','122'], a:2, exp:'ويلت شامبرلين سجل 100 نقطة في مباراة واحدة عام 1962 — رقم قياسي لا يُضاهى.'},
+    {q:'كم كيلومتراً يقطع سباق الدراجات Tour de France؟', opts:['2000','2500','3200','3500'], a:3, exp:'Tour de France يتراوح بين 3200-3500 كيلومتراً على مدى 21 مرحلة.'},
+    {q:'ما أكثر دولة حصداً للميداليات الذهبية في تاريخ الأولمبياد؟', opts:['روسيا','الصين','المملكة المتحدة','الولايات المتحدة'], a:3, exp:'الولايات المتحدة تتصدر قائمة الدول الأكثر حصداً للذهب في تاريخ الأولمبياد.'},
+  ]},
+};
+
+const LVLS={easy:{l:'سهل',c:'easy',t:20,p:10},medium:{l:'متوسط',c:'medium',t:15,p:20},hard:{l:'صعب',c:'hard',t:10,p:30},mixed:{l:'مختلط',c:'mixed',t:15,p:15}};
+const AR=['أ','ب','ج','د'];
+let selCat=null,selLvl='easy',Qs=[],qi=0,score=0,corr=0,wrng=0,tval=0,tint=null,done=false,ans=[];
+
+function buildCats(){
+  const g=document.getElementById('catGrid');g.innerHTML='';
+  Object.keys(DB).forEach(cat=>{
+    const d=DB[cat],card=document.createElement('div');
+    card.className='cat-card';card.dataset.cat=cat;card.style.background=d.grad;
+    const total=d.easy.length+d.medium.length+d.hard.length;
+    card.innerHTML=`<div class="cat-check">✓</div><span class="cat-icon">${d.icon}</span><div class="cat-name">${cat}</div><div class="cat-count">${total} سؤال</div>`;
+    card.addEventListener('click',()=>{
+      document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');selCat=cat;
+      const sb=document.getElementById('startBtn');sb.disabled=false;sb.textContent='ابدأ التحدي ←';
+    });
+    g.appendChild(card);
+  });
+}
+
+document.querySelectorAll('.lvl-btn').forEach(b=>b.addEventListener('click',function(){
+  document.querySelectorAll('.lvl-btn').forEach(x=>x.classList.remove('selected'));
+  this.classList.add('selected');selLvl=this.dataset.lvl;
+}));
+
+function show(s){document.querySelectorAll('.qz-screen').forEach(e=>e.classList.remove('active'));document.getElementById('screen'+s).classList.add('active');}
+
+function getQs(){
+  const c=DB[selCat];
+  let p=selLvl==='mixed'?[...c.easy,...c.medium,...c.hard]:[...c[selLvl]];
+  return p.sort(()=>Math.random()-0.5).slice(0,Math.min(10,p.length));
+}
+
+function start(){Qs=getQs();qi=0;score=0;corr=0;wrng=0;ans=[];show('Game');renderQ();}
+
+function renderQ(){
+  clearInterval(tint);done=false;
+  const q=Qs[qi],lv=LVLS[selLvl];
+  document.getElementById('progFill').style.width=Math.round(qi/Qs.length*100)+'%';
+  document.getElementById('qNum').textContent=(qi+1)+'/'+Qs.length;
+  document.getElementById('lvlBadge').textContent=lv.l;
+  document.getElementById('lvlBadge').className='lvl-badge '+lv.c;
+  document.getElementById('catPill').textContent=selCat;
+  document.getElementById('scorePill').textContent=score+' نقطة';
+  const qc=document.getElementById('qCard');qc.classList.remove('pop');void qc.offsetWidth;qc.classList.add('pop');
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('explainBox').className='explain-box';
+  document.getElementById('nextBtn').className='next-btn';
+  const ow=document.getElementById('optsWrap');ow.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='opt';
+    b.innerHTML=`<div class="opt-letter">${AR[i]}</div><span>${o}</span>`;
+    b.addEventListener('click',()=>pick(i));ow.appendChild(b);
+  });
+  tval=lv.t;
+  const tb=document.getElementById('timerBox');tb.textContent=tval;tb.className='timer-box';
+  tint=setInterval(()=>{
+    tval--;tb.textContent=tval;
+    if(tval<=5)tb.className='timer-box warn';
+    if(tval<=0){clearInterval(tint);timeUp();}
+  },1000);
+}
+
+function pick(i){
+  if(done)return;done=true;clearInterval(tint);
+  const q=Qs[qi],ok=i===q.a;
+  if(ok){score+=LVLS[selLvl].p;corr++;}else wrng++;
+  ans.push({q:q.q,ok,mine:q.opts[i],right:q.opts[q.a]});
+  document.querySelectorAll('.opt').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===q.a)b.className='opt '+(i===q.a?'correct':'reveal');
+    if(j===i&&!ok)b.className='opt wrong';
+  });
+  const eb=document.getElementById('explainBox');
+  eb.innerHTML=`<b>${ok?'✅ صحيح!':'❌ خطأ!'}</b> ${q.exp}`;
+  eb.className='explain-box show';
+  document.getElementById('scorePill').textContent=score+' نقطة';
+  const nb=document.getElementById('nextBtn');nb.className='next-btn show';
+  nb.textContent=qi===Qs.length-1?'النتائج 🏆':'التالي ←';
+}
+
+function timeUp(){
+  if(done)return;done=true;wrng++;
+  const q=Qs[qi];
+  ans.push({q:q.q,ok:false,mine:'⏰ انتهى الوقت',right:q.opts[q.a]});
+  document.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.className='opt reveal';});
+  const eb=document.getElementById('explainBox');
+  eb.innerHTML=`<b>⏰ انتهى الوقت!</b> ${q.exp}`;eb.className='explain-box show';
+  const nb=document.getElementById('nextBtn');nb.className='next-btn show';
+  nb.textContent=qi===Qs.length-1?'النتائج 🏆':'التالي ←';
+}
+
+function nextQ(){qi++;if(qi>=Qs.length)showResult();else renderQ();}
+
+function showResult(){
+  clearInterval(tint);
+  const pct=Math.round(corr/Qs.length*100);
+  document.getElementById('resPct').textContent=pct+'%';
+  document.getElementById('rsC').textContent=corr;
+  document.getElementById('rsW').textContent=wrng;
+  document.getElementById('rsS').textContent=score;
+  let em,ti,su,col;
+  if(pct>=80){em='🏆';ti='ممتاز!';su='أداء استثنائي، أنت خبير حقيقي!';col='#22c55e';}
+  else if(pct>=60){em='👍';ti='جيد جداً!';su='نتيجة رائعة، يمكنك التحسين أكثر.';col='#f7971e';}
+  else if(pct>=40){em='📚';ti='مقبول';su='تحتاج لمزيد من الدراسة والتدريب.';col='#6c63ff';}
+  else{em='💪';ti='حاول مجدداً!';su='كل محاولة تعلمك شيئاً جديداً!';col='#ff6584';}
+  document.getElementById('resEmoji').textContent=em;
+  document.getElementById('resTitle').textContent=ti;
+  document.getElementById('resSub').textContent=su;
+  const ring=document.getElementById('resultRing');
+  ring.style.setProperty('--rc',col);ring.style.setProperty('--rp',pct+'%');
+  const list=document.getElementById('reviewList');list.innerHTML='';
+  ans.forEach(a=>{
+    const d=document.createElement('div');d.className='rev-item';
+    d.innerHTML=`<div class="rev-dot ${a.ok?'c':'w'}"></div><div><div class="rev-q">${a.q}</div><div class="rev-a">إجابتك: <span class="${a.ok?'ok':'bad'}">${a.mine}</span>${!a.ok?' ← الصح: <span class="ok">'+a.right+'</span>':''}</div></div>`;
+    list.appendChild(d);
+  });
+  show('Result');
+}
+
+document.getElementById('startBtn').addEventListener('click',start);
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('replayBtn').addEventListener('click',start);
+document.getElementById('homeBtn').addEventListener('click',()=>show('Home'));
+buildCats();
+</script>
+</body>
+</html>
